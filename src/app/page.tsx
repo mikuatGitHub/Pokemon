@@ -1,95 +1,67 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+import { useState } from "react"
 
-export default function Home() {
+// // エンドポイントからポケモンを3つ取得
+// const pokemonImages: string[] = [
+//   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png",
+//   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/445.png",
+//   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/887.png",
+// ];
+// // ランダムに1つ指定
+// const randomPokemonImage= (): string => {
+//   const index = Math.floor(Math.random() * pokemonImages.length)
+//   return pokemonImages[index];
+// }
+
+
+// PokeAPIからresponseを取得する
+// 905の全ポケモンからランダムに1つのポケモンを指定
+const fetchPokemon = async () => {
+  // const res = await fetch("https://pokeapi.co/api/v2/pokemon/25");
+  const index= Math.floor(Math.random()*905 +1)
+  const res = await fetch("https://pokeapi.co/api/v2/pokemon/"+index);
+  const result = await res.json();
+  return result;
+}
+// // 取得した1つのポケモンデータから任意のvalueを取得
+// fetchPokemon().then((pokemon) => {
+//   console.log(`id: ${pokemon['id']}`);
+//   console.log(`name: ${pokemon['name']}`);
+//   console.log(`url: ${pokemon['sprites']['front_default']}`);
+// })
+
+
+export default function Index() {
+  // 画像切替のためにuseStateを用いる
+  const [pokemonImageUrl, setPokemonImageUrl] = useState("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png");
+  const [pokemonID, setPokemonID] = useState("25");
+  const [pokemonName, setPokemonName] = useState("pikachu");
+
+  // ボタンのクリックイベント
+  const handleClick = async() => {
+    // setPokemonImageUrl(randomPokemonImage);
+
+    const pokemon = await fetchPokemon();
+    setPokemonImageUrl(pokemon['sprites']['front_default']);
+    setPokemonID(pokemon['id']);
+    setPokemonName(pokemon['name']);
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <main className="flex items-center justify-center w-screen h-screen">
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+    <div className="flex-col text-center">
+    <button
+      onClick={handleClick}
+      className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+      ポケモンを出現させる
+    </button>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+    <img src={pokemonImageUrl} className="mx-auto"/>
+    <p>{pokemonID}</p>
+    <p>{pokemonName}</p>
+    </div>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
     </main>
   );
 }
